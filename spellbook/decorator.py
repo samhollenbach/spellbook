@@ -1,7 +1,7 @@
 from functools import partial
 
 
-class PropStore:
+class Accessor:
 
     def __init__(self, inst, type_):
         self.inst = inst
@@ -34,7 +34,7 @@ class DecoratorMeta(type):
 
     def __new__(mcs, *args, **kwargs):
         obj = super().__new__(mcs, *args, **kwargs)
-        obj.__getattr__ = lambda inst, type_: PropStore(inst, type_)
+        obj.__getattr__ = lambda inst, type_: Accessor(inst, type_)
         return obj
 
     def __getattr__(cls, key):
