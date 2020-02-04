@@ -1,28 +1,11 @@
 from functools import partial
 
 
-class RegistryMeta(type):
-
-    def __getattr__(cls, key):
-        print(key)
-
-        def f(func):
-            func.type = key
-            return func
-
-        return f
-
-
-class Registry(metaclass=RegistryMeta):
-    pass
-
-
 class PropStore:
 
     def __init__(self, inst, type_):
         self.inst = inst
         self.type = type_
-        self.d = {}
 
     def __getattr__(self, item):
         cls_dict = type(self.inst).__dict__
@@ -55,27 +38,13 @@ class DecoratorMeta(type):
         obj.__getattr__ = lambda inst, type: PropStore(inst, type)
         return obj
 
+    def __getattr__(cls, key):
+        def f(func):
+            func.type = key
+            return func
 
-class Test(metaclass=DecoratorMeta):
-
-    def __init__(self):
-        pass
-
-    @Registry.handlers
-    def test(self):
-        print('I am hadlers')
-        return 'wew'
-
-    @Registry.emitters
-    def test(self):
-        print('I am emitter')
-
-        h = self.handlers.test()
-        print('emitter also get handle', h)
-        return 'wew'
+        return f
 
 
-t = Test()
-
-t.emitters.test()
-t.handlers.test()
+class Decoratable(metaclass=DecoratorMeta):
+    pass
