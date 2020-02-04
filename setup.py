@@ -25,8 +25,7 @@ setup(
         test_suite='nose.collector',
         tests_require=[
             'nose',
-            'mock',
-            ],
+        ],
         classifiers=[
             'Development Status :: 4 - Beta',
             'Intended Audience :: Developers',
@@ -38,5 +37,5 @@ setup(
             'Programming Language :: Python :: Implementation :: PyPy',
             'Topic :: Software Development :: Libraries',
             'Topic :: Utilities',
-            ]
-        )
+        ]
+    )

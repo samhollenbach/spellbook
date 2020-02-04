@@ -10,7 +10,7 @@ class PropStore:
     def __getattr__(self, item):
         cls_dict = type(self.inst).__dict__
         for k, v in cls_dict.items():
-            if k.strip() == item:
+            if k.strip('_') == item:
                 func = cls_dict[k]
                 if func.type == self.type:
                     return partial(func, self.inst)
@@ -20,22 +20,21 @@ class PropStore:
 class noclashdict(dict):
 
     def __setitem__(self, name, value):
-        setitem = super().__setitem__
         while name in self:
-            name += ' '
-        setitem(name, value)
+            name += '_'
+        super().__setitem__(name, value)
 
 
 class DecoratorMeta(type):
 
     @classmethod
-    def __prepare__(cls, name, bases):
+    def __prepare__(mcs, name, bases):
         # https://groups.google.com/d/msg/comp.lang.python/rQjrnrg6TmE/JG_u2E2oap0J
         return noclashdict()
 
-    def __new__(cls, *args, **kwargs):
-        obj = super().__new__(cls, *args, **kwargs)
-        obj.__getattr__ = lambda inst, type: PropStore(inst, type)
+    def __new__(mcs, *args, **kwargs):
+        obj = super().__new__(mcs, *args, **kwargs)
+        obj.__getattr__ = lambda inst, type_: PropStore(inst, type_)
         return obj
 
     def __getattr__(cls, key):
@@ -46,5 +45,5 @@ class DecoratorMeta(type):
         return f
 
 
-class Decoratable(metaclass=DecoratorMeta):
+class Decorable(metaclass=DecoratorMeta):
     pass
