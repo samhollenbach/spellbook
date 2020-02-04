@@ -10,7 +10,7 @@ class PropStore:
     def __getattr__(self, item):
         cls_dict = type(self.inst).__dict__
         for k, v in cls_dict.items():
-            if k.strip() == item:
+            if k.strip('_') == item:
                 func = cls_dict[k]
                 if func.type == self.type:
                     return partial(func, self.inst)
@@ -34,7 +34,7 @@ class DecoratorMeta(type):
 
     def __new__(mcs, *args, **kwargs):
         obj = super().__new__(mcs, *args, **kwargs)
-        obj.__getattr__ = lambda inst, type: PropStore(inst, type)
+        obj.__getattr__ = lambda inst, type_: PropStore(inst, type_)
         return obj
 
     def __getattr__(cls, key):
