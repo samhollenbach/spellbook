@@ -3,21 +3,36 @@ from spellbook.decorator import Decorable
 
 
 @nottest
-class DecoratorTest(Decorable):
+class DecorableTest(Decorable):
+
+    def __init__(self, val):
+        self.val = val
 
     @Decorable.handlers
     def test(self):
-        return 'handler'
+        return f'handler({self.val})'
 
     @Decorable.emitters
     def test(self):
-        return 'emitter'
+        return f'emitter({self.val})'
 
 
-def test_decorators():
-    t = DecoratorTest()
+def test_decorable():
+    dec_test1 = DecorableTest(1)
 
-    t1 = t.handlers.test()
-    t2 = t.emitters.test()
-    eq_(t1, 'handler')
-    eq_(t2, 'emitter')
+    t1 = dec_test1.handlers.test()
+    e1 = dec_test1.emitters.test()
+    eq_(t1, 'handler(1)')
+    eq_(e1, 'emitter(1)')
+
+    dec_test2 = DecorableTest(2)
+
+    t2 = dec_test2.handlers.test()
+    e2 = dec_test2.emitters.test()
+    eq_(t2, 'handler(2)')
+    eq_(e2, 'emitter(2)')
+
+    t1b = dec_test1.handlers.test()
+    e1b = dec_test1.emitters.test()
+    eq_(t1b, 'handler(1)')
+    eq_(e1b, 'emitter(1)')
