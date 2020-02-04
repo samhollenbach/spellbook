@@ -1,5 +1,4 @@
 from functools import partial
-from pprint import pprint
 
 
 class RegistryMeta(type):
@@ -14,20 +13,8 @@ class RegistryMeta(type):
         return f
 
 
-
 class Registry(metaclass=RegistryMeta):
     pass
-
-
-
-
-class noclashdict(dict):
-
-    def __setitem__(self, name, value):
-        setitem = super().__setitem__
-        while name in self:
-            name += ' '
-        setitem(name, value)
 
 
 class PropStore:
@@ -47,10 +34,20 @@ class PropStore:
         raise AttributeError
 
 
-class Meta(type):
+class noclashdict(dict):
+
+    def __setitem__(self, name, value):
+        setitem = super().__setitem__
+        while name in self:
+            name += ' '
+        setitem(name, value)
+
+
+class DecoratorMeta(type):
 
     @classmethod
     def __prepare__(cls, name, bases):
+        # https://groups.google.com/d/msg/comp.lang.python/rQjrnrg6TmE/JG_u2E2oap0J
         return noclashdict()
 
     def __new__(cls, *args, **kwargs):
@@ -59,7 +56,7 @@ class Meta(type):
         return obj
 
 
-class Test(metaclass=Meta):
+class Test(metaclass=DecoratorMeta):
 
     def __init__(self):
         pass
