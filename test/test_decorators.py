@@ -1,11 +1,11 @@
 from nose.tools import eq_, nottest
-from spellbook.decorator import Decoratable
+from spellbook.decorator import Decorable
 
 
 @nottest
-class DecoratorTest(Decoratable):
+class DecoratorTest(Decorable):
 
-    @Decoratable.handlers
+    @Decorable.handlers
     def test(self):
         return 'handler'
 
