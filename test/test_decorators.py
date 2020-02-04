@@ -36,3 +36,9 @@ def test_decorable():
     e1b = dec_test1.emitters.test()
     eq_(t1b, 'handler(1)')
     eq_(e1b, 'emitter(1)')
+
+    dec_test1.val = 3
+    t1c = dec_test1.handlers.test()
+    e1c = dec_test1.emitters.test()
+    eq_(t1c, 'handler(3)')
+    eq_(e1c, 'emitter(3)')
