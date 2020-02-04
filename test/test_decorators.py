@@ -9,7 +9,7 @@ class DecoratorTest(Decorable):
     def test(self):
         return 'handler'
 
-    @Decoratable.emitters
+    @Decorable.emitters
     def test(self):
         return 'emitter'
 
