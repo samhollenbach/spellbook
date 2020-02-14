@@ -1,31 +1,31 @@
 from nose.tools import eq_, nottest
-from spellbook.decorator import Decorable
+from spellbook.markable import Markable, mark
 
 
 @nottest
-class DecorableTest(Decorable):
+class MarkableTest(Markable):
 
     def __init__(self, val):
         self.val = val
 
-    @Decorable.handlers
+    @mark('handlers')
     def test(self):
         return f'handler({self.val})'
 
-    @Decorable.emitters
+    @mark('emitters')
     def test(self):
         return f'emitter({self.val})'
 
 
 def test_decorable():
-    dec_test1 = DecorableTest(1)
+    dec_test1 = MarkableTest(1)
 
     t1 = dec_test1.handlers.test()
     e1 = dec_test1.emitters.test()
     eq_(t1, 'handler(1)')
     eq_(e1, 'emitter(1)')
 
-    dec_test2 = DecorableTest(2)
+    dec_test2 = MarkableTest(2)
 
     t2 = dec_test2.handlers.test()
     e2 = dec_test2.emitters.test()
