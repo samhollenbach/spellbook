@@ -1,4 +1,4 @@
-from functools import partial
+from functools import partial, wraps
 
 
 class Accessor:
@@ -51,13 +51,9 @@ class Markable(metaclass=MarkMeta):
         return types
 
 
-class mark:
-    """The decorator"""
-
-    def __init__(self, type_):
-        self.type = type_
-
-    def __call__(self, func):
-        func.type = self.type
-        func.__name__ = f'{self.type}.{func.__name__}'
+def mark(type_):
+    def decorator(func):
+        func.type = type_
+        func.__name__ = f'{type_}.{func.__name__}'
         return func
+    return decorator
