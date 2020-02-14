@@ -1,5 +1,6 @@
+import asyncio
+
 import functools
-import time
 
 
 def retry(func, wait=3, retries=None, *args, **kwargs):
@@ -68,24 +69,96 @@ class waiter(object):
         return functools.partial(cls.dec, hook=hook, type_=cls.RESPOND)
 
 
-class test:
+# class test:
+#
+#     def main(self, *args, **kwargs):
+#         r = retry(self.call, *args, **kwargs)
+#         # False: failed
+#         # True: succeeded
+#
+#     @waiter.wait('test')
+#     def call(self):
+#         print('call!')
+#         return 'anything'
+#
+#     @waiter.respond('test')
+#     def resp(self):
+#         print('resp!')
+#         return True
 
-    def main(self, *args, **kwargs):
-        r = retry(self.call, *args, **kwargs)
-        # False: failed
-        # True: succeeded
 
-    @waiter.wait('test')
-    def call(self):
-        print('call!')
-        return 'anything'
+class ran_wrapper(object):
 
-    @waiter.respond('test')
-    def resp(self):
-        print('resp!')
-        return True
+    def __init__(self, f):
+        self.f = f
+        self.ran = False
+        self.r_val = None
+
+    def __call__(self, *args, **kwargs):
+        self.r_val = self.f(*args, **kwargs)
+        self.ran = True
+        return self.r_val
+
+    def __get__(self, instance, owner):
+        pfunc = functools.partial(self.__call__, instance)
+        pfunc.ran = self.ran
+        pfunc.r_val = self.r_val
+        return pfunc
 
 
-t = test()
+class async_test:
 
-t.resp()
+    @ran_wrapper
+    async def responder(self):
+        print('responded')
+        await asyncio.sleep(5)
+        print('setting ran')
+        return 'test'
+
+    async def main(self):
+        print('pubbed')
+        p = await self.poll()
+        return p
+
+    async def poll(self):
+        while not self.responder.ran:
+            print('polled')
+            await asyncio.sleep(1)
+        return self.responder.r_val
+
+
+async def emit(q: asyncio.Queue) -> None:
+    print('adding to queue')
+    await q.put(True)
+    while not q.empty():
+        print('looping')
+        await asyncio.sleep(1)
+    print('exiting emit')
+
+
+async def react(q: asyncio.Queue) -> None:
+    await asyncio.sleep(5)
+    print('removing from queue')
+    t = await q.get()
+    return t
+
+
+at = async_test()
+
+
+
+
+
+
+async def main():
+    q = asyncio.Queue()
+    await asyncio.gather(emit(q), react(q))
+
+
+if __name__ == "__main__":
+    import time
+
+    s = time.perf_counter()
+    asyncio.run(main())
+    elapsed = time.perf_counter() - s
+    print(f"{__file__} executed in {elapsed:0.2f} seconds.")

@@ -41,7 +41,14 @@ class MarkMeta(type):
 
 class Markable(metaclass=MarkMeta):
     """Use as the super class"""
-    pass
+
+    def list(self):
+        types = set()
+        cls = type(self)
+        for k, v in cls.__dict__.items():
+            if callable(v) and hasattr(v, 'type'):
+                types.add(v.type)
+        return types
 
 
 class mark:

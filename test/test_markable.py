@@ -17,28 +17,35 @@ class MarkableTest(Markable):
         return f'emitter({self.val})'
 
 
-def test_decorable():
-    dec_test1 = MarkableTest(1)
+def test_markable_list():
+    mtest = MarkableTest('test')
 
-    t1 = dec_test1.handlers.test()
-    e1 = dec_test1.emitters.test()
+    l = mtest.list()
+    print(l)
+
+
+def test_markable():
+    mark_test1 = MarkableTest(1)
+
+    t1 = mark_test1.handlers.test()
+    e1 = mark_test1.emitters.test()
     eq_(t1, 'handler(1)')
     eq_(e1, 'emitter(1)')
 
-    dec_test2 = MarkableTest(2)
+    mark_test2 = MarkableTest(2)
 
-    t2 = dec_test2.handlers.test()
-    e2 = dec_test2.emitters.test()
+    t2 = mark_test2.handlers.test()
+    e2 = mark_test2.emitters.test()
     eq_(t2, 'handler(2)')
     eq_(e2, 'emitter(2)')
 
-    t1b = dec_test1.handlers.test()
-    e1b = dec_test1.emitters.test()
+    t1b = mark_test1.handlers.test()
+    e1b = mark_test1.emitters.test()
     eq_(t1b, 'handler(1)')
     eq_(e1b, 'emitter(1)')
 
-    dec_test1.val = 3
-    t1c = dec_test1.handlers.test()
-    e1c = dec_test1.emitters.test()
+    mark_test1.val = 3
+    t1c = mark_test1.handlers.test()
+    e1c = mark_test1.emitters.test()
     eq_(t1c, 'handler(3)')
     eq_(e1c, 'emitter(3)')
