@@ -1,4 +1,4 @@
-from functools import partial, wraps
+from functools import partial
 
 
 class Accessor:
