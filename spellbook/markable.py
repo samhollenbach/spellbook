@@ -8,12 +8,15 @@ class Accessor:
         self.type = type_
 
     def __getattr__(self, item):
-        cls_dict = type(self.inst).__dict__
-        for k, v in cls_dict.items():
-            if k.strip('_') == item:
-                func = cls_dict[k]
-                if func.type == self.type:
-                    return partial(func, self.inst)
+        bases = type(self.inst).__mro__
+        for base in bases:
+            cls_dict = base.__dict__
+
+            for k, v in cls_dict.items():
+                if k.strip('_') == item:
+                    func = cls_dict[k]
+                    if func.type == self.type:
+                        return partial(func, self.inst)
         raise AttributeError(
             f'Could not find function {item} in {type(self).__name__} \'{self.type}\'')
 
